@@ -4,5 +4,5 @@ const mongoURI = 'mongodb://localhost:27017/cloudBook'
 const connectToMongo = ()=>{
     mongoose.connect(mongoURI)
 }
-console.log(" connected")
+console.log("---------connected to server successfully----------")
 module.exports = connectToMongo;

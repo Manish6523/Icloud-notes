@@ -19,8 +19,8 @@ router.get('/fetchallnotes', fetchuser, async (req, res) => {
 
 //Route 2--------------- create notes in ""post"" method : ""//api/notes/addnote""login required
 router.post('/addnote', fetchuser, [
-  body("title").isLength({ min: 3 }),
-  body("description").isLength({ min: 5 })], async (req, res) => {
+  body("title").isLength({ min: 2 }),
+  body("description").isLength({ min: 2 })], async (req, res) => {
     try {
       const { title, description, tag } = req.body
 

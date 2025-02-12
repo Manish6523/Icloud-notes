@@ -7,17 +7,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "manish6523@sharma";
-
+let success = false
 //Route 1---------------Create a user in ""post"" method : ""/api/auth/createUsers"" .no login required
 router.post(
   "/createUsers",
-  [
-    body("name").isLength({ min: 3 }),
-    body("email").isEmail(),
-    body("password").isLength({ min: 8 }),
-  ],
   async (req, res) => {
     // Check for errors
+    let success=false
     const result = validationResult(req);
     // if (result.isEmpty()) {
     //   return res.send(`Hello, ${req.query.name}!`);
@@ -28,6 +24,7 @@ router.post(
     try {
       let user = await User.findOne({ email: req.body.email });
       if (user) {
+        success = false
         return res.status(400).json({ errors: "this user is already exists " });
       }
 
@@ -45,11 +42,13 @@ router.post(
       const data = {
         user: {
           id: user.id,
+          name: user.name
         },
       };
       const authToken = jwt.sign(data, JWT_SECRET);
-      console.log(authToken);
-      res.json({ user, authToken });
+      success = true
+      console.log(success,user, authToken);
+      res.json({ success,user, authToken });
     } catch (error) {
       console.error(error.message);
       res.status(500).send('error Occured')
@@ -63,6 +62,7 @@ router.post(
   "/login",
   [body("email", 'enter a valid Email').isEmail(), body("password", 'Password cannot be Empty').exists()],
   async (req, res) => {
+    let success=false
     // Check for errors
     const result = validationResult(req);
     // if (result.isEmpty()) {
@@ -76,16 +76,20 @@ router.post(
         return res.status(400).json({ error: 'invalid Credentials' })
       }
       const passwordCompare = await bcrypt.compare(password, user.password)
-      if (!password) {
+      if (!passwordCompare) {
+        success = false
         return res.status(400).json({ error: 'invalid Credentials' })
       }
       const data = {
         user: {
           id: user.id,
+          name: user.name
         },
       };
       const authToken = jwt.sign(data, JWT_SECRET);
-      res.send({ user,authToken })
+      success = true
+      console.log(success)
+      res.json({ success,user, authToken })
     } catch (error) {
       console.error(error.message);
       res.status(500).send('internal error Occured')
